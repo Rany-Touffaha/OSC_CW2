@@ -8,6 +8,5 @@ main(int argc, char *argv[])
 {
   printf(1, "About to read from address 0...\n");
   printf(1, "Got: %d\n", *zeroptr);
-  // This is a test
   exit();
 }
