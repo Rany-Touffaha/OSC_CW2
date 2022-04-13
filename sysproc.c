@@ -109,3 +109,23 @@ sys_mprotect(void)
 
   return mprotect(addr, len);
 }
+
+int
+sys_munprotect(void)
+{
+
+  void *addr;
+  int len;
+
+  if (argint(1, &len) < 0 || argptr(0, (char **)&addr, sizeof(void *)))
+    return -1;
+
+  if (len <= 0) //len less than or equal to zero
+    return -1;
+  else if((uint)addr % PGSIZE != 0)// addr is not page aligned
+    return -1;
+  else if ((uint)addr < PGSIZE) // addr points to a region that is not currently a part of the address space
+    return -1;
+
+  return munprotect(addr, len);
+}

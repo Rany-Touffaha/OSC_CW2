@@ -251,7 +251,38 @@ mprotect(void *addr, int len)
 
   //makes hardware aware of changes made in page-table entry
   lcr3(V2P(curproc->pgdir));  
-return 0;
+  return 0;
+}
+
+//makes the files read-write
+int
+munprotect(void *addr, int len)
+{
+
+  struct proc *curproc = myproc();
+
+   //len less than or equal to zero
+  if (len <= 0)
+    return -1;
+  // addr is not page aligned
+  else if((uint)addr % PGSIZE != 0)
+    return -1;
+  // addr points to a region that is not currently a part of the address space
+  else if ((uint)addr + len*PGSIZE > curproc->vlimit) 
+    return -1;
+
+  uint i;
+  pte_t *pte;
+
+  //iterates through each page 
+  for(i = (int)addr; i < (int)addr + len*PGSIZE; i += PGSIZE){
+    pte = walkpgdir(curproc->pgdir, (void *)i, 0);
+    *pte |= PTE_W;
+  }
+
+  //makes hardware aware of changes made in page-table entry
+  lcr3(V2P(curproc->pgdir));  
+  return 0;
 }
 
 // Allocate page tables and physical memory to grow process from oldvlimit to
