@@ -246,6 +246,7 @@ mprotect(void *addr, int len)
   //iterates through each page 
   for(i = (int)addr; i < (int)addr + len*PGSIZE; i += PGSIZE){
     pte = walkpgdir(curproc->pgdir, (void *)i, 0);
+    //removes writing functionality from the page
     *pte &= ~PTE_W;
   }
 
@@ -277,6 +278,7 @@ munprotect(void *addr, int len)
   //iterates through each page 
   for(i = (int)addr; i < (int)addr + len*PGSIZE; i += PGSIZE){
     pte = walkpgdir(curproc->pgdir, (void *)i, 0);
+    //adds writing functionality to the page
     *pte |= PTE_W;
   }
 
